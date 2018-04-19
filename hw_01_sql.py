@@ -54,9 +54,9 @@ print(records)
 """ 1.Сколько мужчин и женщин представлено в этом наборе данных? """
 cursor.execute(
    """
-    SELECT gender, AVG(height)
-    from mytable
-    GROUP BY gender;
+   SELECT gender, AVG(height)
+   from mytable
+   GROUP BY gender
    """
    )
 print('Задание 1')
@@ -69,7 +69,7 @@ cursor.execute(
     """
     SELECT gender, AVG(alco)
     FROM mytable
-    GROUP BY gender;  
+    GROUP BY gender
     """
 )
 
@@ -82,27 +82,28 @@ print(tabulate(fetch_all(cursor), "keys", "psql"))
 
 cursor.execute(
     """
-    SELECT(
+    SELECT ROUND(
         (
-              (SELECT COUNT(smoke)
-              FROM mytable
-              WHERE gender='2'
-              AND
-              smoke='1')/
-              (SELECT COUNT(gender)
-              FROM mytable
-              WHERE gender='2')
-      )/
-     (
-              (SELECT COUNT(smoke)
-              FROM mytable
-              WHERE gender='1'
-              AND
-              smoke='1')/
-              (SELECT COUNT(gender)
-              FROM mytable
-              WHERE gender='1')
-    ));
+           (SELECT COUNT(smoke)
+           FROM mytable
+           WHERE gender='2'
+           AND
+           smoke='1')/
+           (SELECT COUNT(gender)
+           FROM mytable
+           WHERE gender='2')
+        )/
+        (
+           (SELECT COUNT(smoke)
+           FROM mytable
+           WHERE gender='1'
+           AND
+           smoke='1')/
+           (SELECT COUNT(gender)
+           FROM mytable
+           WHERE gender='1')
+         )
+    )
     """
  )
  print('Задание 3')
@@ -114,11 +115,15 @@ print(tabulate(fetch_all(cursor), "keys", "psql"))
     
 cursor.execute(
     """
-        SELECT DISTINCT abs(
-            (SELECT median(age) / 30 from mytable where smoke='1') - \
-            (SELECT median(age) / 30 from mytable where smoke='0')
-        )::int as difference
-        FROM mytable;
+    SELECT DISTINCT abs(
+        (SELECT median(age) / 30
+        FROM mytable
+        WHERE smoke='1') - \
+        (SELECT median(age) / 30
+         FROM mytable
+         WHERE smoke='0')
+    )::int as difference
+    FROM mytable
     """
 ) 
 print('Задание 4')
@@ -140,6 +145,35 @@ print(tabulate(fetch_all(cursor), "keys", "psql"))
 
 cursor.execute(
     """
+    SELECT(
+        SELECT AVG(cardio) 
+        FROM mytable
+        WHERE gender = '2'
+        AND
+        age >= 60365
+        AND
+        age <= 64365
+        AND
+        smoke = '1'
+        AND
+        ap_hi >= 160
+        AND 
+        ap_hi < 180
+        AND
+        cholesterol = '1') / 
+        (SELECT AVG(cardio)
+        FROM mytable
+        WHERE gender = '2'
+        AND
+        age >= 21900
+        AND
+        age <= 64*365
+        AND
+        smoke = '1'
+        AND
+        ap_hi < 120
+        AND cholesterol = '1')
+    FROM mytable limit 1
     """
 )
 print('Задание 5')
@@ -157,6 +191,8 @@ print(tabulate(fetch_all(cursor), "keys", "psql"))
 """
 cursor.execute(
     """
+    SELECT MEDIAN(weight / (height / 100) ^ 2) AS med_BMI
+    FROM mytable
     """
 )
 print('Задание 6.1')
@@ -164,6 +200,22 @@ print(tabulate(fetch_all(cursor), "keys", "psql"))
 
 cursor.execute(
     """
+    SELECT (
+        SELECT AVG(weight)
+        FROM mytable 
+        WHERE gender = '1' )/
+        (SELECT AVG(POW(height/100,2))
+        FROM mytable
+        WHERE gender = '1' ) 
+    FROM mytable limit 1 
+    SELECT (
+        SELECT AVG(weight)
+        FROM mytable
+        WHERE gender = '2' )/
+        (SELECT AVG(POW(height/100,2))
+        FROM mytable
+        WHERE gender = '2' )
+    FROM mytable limit 1 
     """
 )
 print('Задание 6.2')
@@ -171,6 +223,22 @@ print(tabulate(fetch_all(cursor), "keys", "psql"))
 
 cursor.execute(
     """
+    SELECT (
+        SELECT AVG(weight)
+        FROM mytable 
+        WHERE cardio = '1' )/
+        (SELECT AVG(POW(height/100,2))
+        FROM mytable
+        WHERE cardio = '1' ) 
+    FROM mytable limit 1 
+    SELECT (
+        SELECT AVG(weight)
+        FROM mytable
+        WHERE cardio = '0' )/
+        (SELECT AVG(POW(height/100,2))
+        FROM mytable
+        WHERE cardio = '0' )
+    FROM mytable limit 1 
     """
 )
 print('Задание 6.3')
@@ -178,6 +246,35 @@ print(tabulate(fetch_all(cursor), "keys", "psql"))
 
 cursor.execute(
     """
+    SELECT (
+        SELECT AVG(weight)
+        FROM mytable
+        WHERE cardio = '0'
+        AND
+        gender = '2'
+        AND
+        alco = '0' )/
+        (SELECT AVG(pow(height/100,2)) 
+        FROM mytable
+        WHERE cardio = '0'
+        AND
+        gender = '2'
+        AND
+        alco = '0' )
+    FROM mytable limit 1 
+    SELECT (
+        SELECT AVG(weight) 
+        FROM mytable
+        WHERE cardio = '0'
+        AND
+        gender = '1'
+        AND alco = '0' )/
+        (SELECT AVG(pow(height/100,2)) 
+        FROM mytable
+        WHERE cardio = '0'
+        AND gender = '1'
+        AND alco = '0' )
+    FROM mytable limit 1 
     """
 )
 print('Задание 6.4')
@@ -192,6 +289,12 @@ print(tabulate(fetch_all(cursor), "keys", "psql"))
 
 cursor.execute(
     """
+    SELECT COUNT(height) AS all, 
+    PERCENTILE_CONT(0.025) within group (ORDER BY height) AS height_25
+    PERCENTILE_CONT(0.975) within group (ORDER BY height) AS height_975, 
+    PERCENTILE_CONT(0.025) within group (ORDER BY weight) AS weight_25,
+    PERCENTILE_CONT(0.975) within group (ORDER BY weight) AS weight_975
+    FROM mytable limit 1 
     """
 )
 print('Задание 7, квантили')
@@ -204,6 +307,22 @@ print(tabulate(fetch_all(cursor), "keys", "psql"))
 
 cursor.execute(
     """
+    SELECT DISTINCT ROUND( 100 - (
+       (SELECT DISTINCT COUNT(*) * 100 
+       FROM mytable
+       WHERE ap_hi >= ap_lo
+       AND
+       height >= 150 
+       AND
+       height <= 180
+       AND
+       weight >= 51
+       AND 
+       weight <= 108) / 
+       (SELECT COUNT(*)
+       FROM mytable ))
+    ) AS answer 
+    FROM mytable
     """
  )
 print('Задание 7, ответ')
