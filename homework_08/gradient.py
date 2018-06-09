@@ -31,16 +31,16 @@ class GDRegressor:
 
     
 def rmse(y_hat, y):
-    m = y.size  # считаем размер выборки
-    RMSE = 0  # будущая среднеквадратичная ошибка
+    m = y.size
+    rmse = 0
     for i in range(m):
         rmse = ((sum(y_hat[i] - y[i]) ** 2) / m) ** 0.5
     return rmse
 
 
-def r_squared(y_hat, y):\
-    m = y.size  # считаем размкр выборки
+def r_squared(y_hat, y):
+    m = y.size
+    deter_coff = 0
     for i in range(m):
         deter_coff = 1 - (sum((y[i] - y_hat[i]) ** 2) / (sum((y[i] - y.mean()) ** 2)))
-        
-     return deter_coff
+return deter_coff
