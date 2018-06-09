@@ -44,5 +44,3 @@ def r_squared(y_hat, y):\
         deter_coff = 1 - (sum((y[i] - y_hat[i]) ** 2) / (sum((y[i] - y.mean()) ** 2)))
         
      return deter_coff
-
-
