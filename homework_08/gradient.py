@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 
 
-class LogisticRegression:
+class GDRegressor:
     def __init__(self, alpha=0.01, max_iter=100):
         self.alpha = alpha  # скорость обучения
         self.max_iter = max_iter  # количество итераций
@@ -27,4 +27,22 @@ class LogisticRegression:
         y = X_test.dot(self.theta.reshape(1, m))  # перемножаем выборку и вектор весов
         self.pred = y[0]
 
-return self.pred
+        return self.pred
+
+    
+def rmse(y_hat, y):
+    m = y.size  # считаем размер выборки
+    RMSE = 0  # будущая среднеквадратичная ошибка
+    for i in range(m):
+        rmse = ((sum(y_hat[i] - y[i]) ** 2) / m) ** 0.5
+    return rmse
+
+
+def r_squared(y_hat, y):\
+    m = y.size  # считаем размкр выборки
+    for i in range(m):
+        deter_coff = 1 - (sum((y[i] - y_hat[i]) ** 2) / (sum((y[i] - y.mean()) ** 2)))
+        
+     return deter_coff
+
+
