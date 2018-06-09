@@ -17,8 +17,8 @@ class LogisticRegression:
 
         for n in range(self.max_iter):
             z = np.dot(theta, X.T) # берем скалярное произведение теты на транспонированную матрицу признаков
-            mis_prob = 1 / (1 + np.exp(-z)) # считаем значение вероятности
-            J_theta = np.dot((mis_prob - y_train), X) # считаем целевую функцию
+            sigm = 1 / (1 + np.exp(-z)) # считаем коэф правдоподобия
+            J_theta = np.dot((sigm - y_train), X) # считаем целевую функцию
 
             theta = theta - self.alpha * (1 / y_len) * J_theta  # обновление весов
 
@@ -29,9 +29,9 @@ class LogisticRegression:
         prediction = []
         for i in X_test:
             z = self.intercept + np.sum(i * self.coef)
-            sigma = 1 / (1 + np.exp(-z))
+            sigm = 1 / (1 + np.exp(-z))
 
-            if sigma >= 0.5:
+            if sigm >= 0.5:
                 prediction.append(1)
             else:
                 prediction.append(0)
