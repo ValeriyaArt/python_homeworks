@@ -22,8 +22,8 @@ class LogisticRegression:
 
             theta = theta - self.alpha * (1 / y_len) * J_theta  # обновление весов
 
-        self.intercept = theta[0] # оценочные значения для теты 
-        self.coef = theta[1:] # вектор оценок для теты
+        self.intercept = theta[0] # оценочные значения Y для теты 
+        self.coef = theta[1:] # вектор оценок для теты по признакам
 
     def predict(self, X_test):
         prediction = []
